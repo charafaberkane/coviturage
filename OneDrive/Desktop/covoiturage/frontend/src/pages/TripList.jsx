@@ -124,14 +124,19 @@ export default function TripList() {
     <div className="dashboard-container">
       <div className="nav-bar">
         <div className="nav-logo">🚗 Trajets Disponibles</div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {user && user.role === 'CONDUCTEUR' && (
             <button onClick={() => navigate('/trips/create')} style={{ width: 'auto', padding: '8px 15px' }}>
               + Proposer un trajet
             </button>
           )}
+          {user && user.role !== 'CONDUCTEUR' && (
+            <button onClick={() => navigate('/trips/public')} style={{ width: 'auto', padding: '8px 15px' }}>
+              Rechercher un trajet public
+            </button>
+          )}
           <button onClick={() => navigate('/dashboard')} className="btn-secondary" style={{ width: 'auto', padding: '8px 15px', marginTop: 0 }}>
-            Dashboard
+            Retour au dashboard
           </button>
         </div>
       </div>

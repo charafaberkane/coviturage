@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from '../components/Button';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -117,18 +118,29 @@ export default function AdminDashboard() {
     <div className="dashboard-container" style={{ maxWidth: '1200px' }}>
       <div className="nav-bar">
         <div className="nav-logo">🔧 Espace Administrateur</div>
-        <button onClick={() => navigate('/dashboard')} className="btn-secondary" style={{ width: 'auto', padding: '8px 15px' }}>
-          Retour au Dashboard
-        </button>
+        <Button variant="secondary" size="md" onClick={() => navigate('/dashboard')}>
+          Retour au dashboard
+        </Button>
       </div>
 
       {erreur && <div className="alert alert-danger">{erreur}</div>}
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', borderBottom: '2px solid #dee2e6', paddingBottom: '10px' }}>
-        <button onClick={() => setActiveTab('dashboard')} style={{ backgroundColor: activeTab === 'dashboard' ? '#007bff' : '#6c757d' }}>Tableau de bord</button>
-        <button onClick={() => setActiveTab('trips')} style={{ backgroundColor: activeTab === 'trips' ? '#007bff' : '#6c757d' }}>Trajets</button>
-        <button onClick={() => setActiveTab('reservations')} style={{ backgroundColor: activeTab === 'reservations' ? '#007bff' : '#6c757d' }}>Réservations</button>
-        <button onClick={() => setActiveTab('users')} style={{ backgroundColor: activeTab === 'users' ? '#007bff' : '#6c757d' }}>Utilisateurs</button>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
+        {[
+          { key: 'dashboard', label: 'Tableau de bord' },
+          { key: 'trips', label: 'Trajets' },
+          { key: 'reservations', label: 'Réservations' },
+          { key: 'users', label: 'Utilisateurs' },
+        ].map((tab) => (
+          <Button
+            key={tab.key}
+            variant={activeTab === tab.key ? 'primary' : 'outline'}
+            size="sm"
+            onClick={() => setActiveTab(tab.key)}
+          >
+            {tab.label}
+          </Button>
+        ))}
       </div>
 
       {chargement ? (
@@ -186,8 +198,12 @@ export default function AdminDashboard() {
                       <td>{t.conducteur_nom}</td>
                       <td>{t.statut}</td>
                       <td style={{ display: 'flex', gap: '5px' }}>
-                        <button onClick={() => navigate(`/admin/trips/${t.id}`)} style={btnStyle('#17a2b8')}>Détails</button>
-                        <button onClick={() => handleDeleteTrip(t.id)} style={btnStyle('#dc3545')}>Supprimer</button>
+                        <Button variant="secondary" size="sm" onClick={() => navigate(`/admin/trips/${t.id}`)}>
+                          Détails
+                        </Button>
+                        <Button variant="danger" size="sm" onClick={() => handleDeleteTrip(t.id)}>
+                          Supprimer
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -227,7 +243,9 @@ export default function AdminDashboard() {
                       <td>{r.passager_nom}</td>
                       <td>{r.statut}</td>
                       <td>
-                        <button onClick={() => navigate(`/admin/reservations/${r.id}`)} style={btnStyle('#17a2b8')}>Détails</button>
+                        <Button variant="secondary" size="sm" onClick={() => navigate(`/admin/reservations/${r.id}`)}>
+                          Détails
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -262,9 +280,13 @@ export default function AdminDashboard() {
                       <td style={{ display: 'flex', gap: '5px' }}>
                         {u.id !== user.id && (
                           u.statut === 'INACTIF' ? (
-                            <button onClick={() => handleActivate(u.id)} style={btnStyle('#28a745')}>Activer</button>
+                            <Button variant="success" size="sm" onClick={() => handleActivate(u.id)}>
+                              Activer
+                            </Button>
                           ) : (
-                            <button onClick={() => handleDeactivate(u.id)} style={btnStyle('#dc3545')}>Désactiver</button>
+                            <Button variant="danger" size="sm" onClick={() => handleDeactivate(u.id)}>
+                              Désactiver
+                            </Button>
                           )
                         )}
                       </td>
@@ -291,4 +313,3 @@ const StatCard = ({ title, value }) => (
 const tableStyle = { width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff', fontSize: '14px' };
 const thStyle = { backgroundColor: '#f8f9fa', borderBottom: '2px solid #dee2e6', textAlign: 'left' };
 const trStyle = { borderBottom: '1px solid #dee2e6' };
-const btnStyle = (color) => ({ padding: '4px 8px', fontSize: '12px', backgroundColor: color, color: '#fff', border: 'none', borderRadius: '4px', width: 'auto' });

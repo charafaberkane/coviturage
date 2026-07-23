@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Input from '../components/Input';
+import Button from '../components/Button';
+import Alert from '../components/Alert';
+import Card from '../components/Card';
 
 export default function Register() {
   const [nom, setNom] = useState('');
@@ -15,7 +19,6 @@ export default function Register() {
     setErreur('');
     setSuccess('');
 
-    // Validation frontend simple
     if (!nom || !courriel || !motdepasse || !role) {
       setErreur('Tous les champs sont obligatoires.');
       return;
@@ -24,27 +27,21 @@ export default function Register() {
     try {
       const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nom, courriel, motdepasse, role }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setErreur(data.message || 'Une erreur est survenue lors de l\'inscription.');
+        setErreur(data.message || "Une erreur est survenue lors de l'inscription.");
       } else {
         setSuccess('Inscription réussie ! Vous allez être redirigé vers la page de connexion.');
-        // Réinitialiser les champs
+        // Reset fields
         setNom('');
         setCourriel('');
         setMotdepasse('');
-        
-        // Redirection après 2 secondes
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
+        setTimeout(() => navigate('/login'), 2000);
       }
     } catch (err) {
       setErreur('Impossible de se connecter au serveur backend.');
@@ -53,53 +50,41 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-container">
-      <h2>Créer un compte</h2>
-      <p style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--text-muted)' }}>
-        Covoiturage Collège La Cité
-      </p>
+    <div className="auth-page" style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+      <Card style={{ maxWidth: '500px', width: '100%' }}>
+        <h2 style={{ textAlign: 'center' }}>Créer un compte</h2>
+        <p style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--text-muted)' }}>
+          Covoiturage Collège La Cité
+        </p>
 
-      {erreur && <div className="alert alert-danger">{erreur}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+        {erreur && <Alert type="error">{erreur}</Alert>}
+        {success && <Alert type="success">{success}</Alert>}
 
-      <form onSubmit={handleRegister}>
-        <div className="form-group">
-          <label htmlFor="nom">Nom complet</label>
-          <input
+        <form onSubmit={handleRegister}>
+          <Input
             type="text"
-            id="nom"
+            name="nom"
+            placeholder="Ex: Jean Tremblay"
             value={nom}
             onChange={(e) => setNom(e.target.value)}
-            placeholder="Ex: Jean Tremblay"
           />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="courriel">Adresse courriel</label>
-          <input
+          <Input
             type="email"
-            id="courriel"
+            name="courriel"
+            placeholder="nom@lacite.on.ca"
             value={courriel}
             onChange={(e) => setCourriel(e.target.value)}
-            placeholder="nom@lacite.on.ca"
           />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="motdepasse">Mot de passe</label>
-          <input
+          <Input
             type="password"
-            id="motdepasse"
+            name="motdepasse"
+            placeholder="Votre mot de passe"
             value={motdepasse}
             onChange={(e) => setMotdepasse(e.target.value)}
-            placeholder="Votre mot de passe"
           />
-        </div>
-
-        <div className="form-group">
-          <label>Je veux m'inscrire comme :</label>
-          <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal' }}>
+          <div style={{ margin: '0.5rem 0' }}>
+            <label style={{ marginRight: '10px' }}>Je veux m'inscrire comme :</label>
+            <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '15px' }}>
               <input
                 type="radio"
                 name="role"
@@ -110,7 +95,7 @@ export default function Register() {
               />
               Passager
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal' }}>
+            <label style={{ display: 'inline-flex', alignItems: 'center' }}>
               <input
                 type="radio"
                 name="role"
@@ -122,14 +107,13 @@ export default function Register() {
               Conducteur
             </label>
           </div>
+          <Button type="submit" variant="primary">S'inscrire</Button>
+        </form>
+
+        <div className="auth-footer" style={{ marginTop: '1rem', textAlign: 'center' }}>
+          Déjà un compte ? <Link to="/login">Se connecter ici</Link>
         </div>
-
-        <button type="submit">S'inscrire</button>
-      </form>
-
-      <div className="auth-footer">
-        Déjà un compte ? <Link to="/login">Se connecter ici</Link>
-      </div>
+      </Card>
     </div>
   );
 }
